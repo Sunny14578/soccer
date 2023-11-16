@@ -1,0 +1,15 @@
+{% extends 'frontapp/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div>
+        <h1>Welcome to My Page!</h1>
+        <p>This is some additional content with unique styling.</p>
+        <div>
+            <img src="{% static 'images/PL.png' %}">
+        </div>
+    </div>
+
+    <script src="{% static 'js/schedule.js' %}"></script>
+    <!-- <script src="{% static 'soccer_schedule.json' %}"></script> -->
+{% endblock %}

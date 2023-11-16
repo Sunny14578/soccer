@@ -11,21 +11,43 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os, json, logging
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+secret_file = os.path.join(BASE_DIR, 'secret.json')
+
+logger = logging.getLogger(__name__)
+
+try:
+    with open(secret_file, 'r') as f:
+        secrets = json.loads(f.read())
+except FileNotFoundError as e:
+	logger.error(e)
+
+
+def get_secret(KEY, secrets=secrets):
+    """
+    secret.json 파일에서 key 값을 가져옵니다.
+    """
+    try:
+        return secrets[KEY]
+    except KeyError:
+        error_msg = "Set the {} environment variable".format(KEY)
+    raise ImproperlyConfigured(error_msg)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-_@lc9s6cvwg)#kb183kxuq4e_=9x&a+qk+d@0b(qj9y@s5xp8n'
+SECRET_KEY = get_secret("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -38,6 +60,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'apiapp',
+    'frontapp',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +78,7 @@ ROOT_URLCONF = 'myproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,11 +96,20 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+HOST = get_secret("HOST")
+NAME = get_secret("NAME")
+PORT = get_secret("PORT")
+USER = get_secret("USER")
+PASSWORD = get_secret("PASSWORD")
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+     'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'HOST' : HOST,
+        "NAME": NAME,
+        'PORT': PORT,
+        'USER': USER,
+        'PASSWORD': PASSWORD,
     }
 }
 
@@ -117,6 +149,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'frontapp/static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'static_root')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
