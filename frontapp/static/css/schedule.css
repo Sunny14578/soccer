@@ -38,6 +38,10 @@ img{
     height: 25px;
 }
 
+i{
+    cursor: pointer;
+}
+
 .main{
     display: flex;
     flex-direction: column;
@@ -47,6 +51,31 @@ img{
 
 .main > *{
     margin: 10px 0 10px 0;
+}
+
+
+/* 날짜 */
+.date{
+    display: flex;
+    flex-direction: column;
+    height: 150px;
+}
+
+.year-date{
+    display: flex;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    height: 50px;
+}
+
+.year-date > *{
+    margin: 0 10px 0 10px;
+    font-size: 25px;
+}
+
+.year-date > span{
+    font-weight: bold;
 }
 
 .leagues{
@@ -70,11 +99,6 @@ img{
 .all-btn{
     background-color: #695CFE !important;
     color: var(--sidebar-color);
-}
-
-.date{
-    height: 150px;
-    background-color: var(--body--color);
 }
 
 .league{

@@ -1,6 +1,6 @@
 window.onload = function() {
     // 페이지 로드 시 실행될 코드
-    // getCompetitionTeamAPI();
+    dateUpdate();
     getScheduleAPI();
 };
 
@@ -24,23 +24,54 @@ function getCompetitionTeamAPI(){
     });   
 }
 
-// function getScheduleAPI(){
-//     apiUrl = '../api/schedule/';
+const currentDateTag = document.querySelector(".year-date span");
 
-//     fetch(apiUrl, {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         }
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         console.log(data);
-//     })
-//     .catch(error => {
-//         console.error('Error loading JSON file:', error);
-//     });   
-// }
+const currentDate = new Date();
+
+let year = currentDate.getFullYear();
+let month = currentDate.getMonth() + 1;
+let day = currentDate.getDate();
+
+function dateUpdate(){
+    const dateText = year + "." + padZero(month);
+
+    currentDateTag.innerHTML = dateText;
+}
+
+function padZero(number) {
+    return number < 10 ? `0${number}` : number;
+}
+
+const preArrow = document.querySelector(".bx-chevron-left");
+const nextArrow = document.querySelector(".bx-chevron-right");
+
+function prechangeMonth(){
+    
+    month = month-1;
+
+    if (month == 0) {
+        year -= 1;
+        month = 12;
+    }
+    
+    const dateText = year + "." + padZero(month);
+    currentDateTag.innerHTML = dateText;
+}
+
+function nextchangeMonth(){
+    month = month+1;
+
+    if (month == 13) {
+        year += 1;
+        month = 1;
+    }
+    
+    const dateText = year + "." + padZero(month);
+    currentDateTag.innerHTML = dateText;
+}
+
+preArrow.addEventListener("click", prechangeMonth);
+nextArrow.addEventListener("click", nextchangeMonth);
 
 function getScheduleAPI(){
     apiUrl = '../api/schedule/';
