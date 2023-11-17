@@ -8,6 +8,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from .models import Team, Competition, Schedule
 from django.db import transaction
+from .serializers import *
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -91,6 +92,15 @@ def get_competition_team():
         return Response({'error': 'Error making the API request'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class ScheduleAPIView(APIView):
+    def get(self, request):
+        schedules = Schedule.objects.all().select_related('awayTeam', 'homeTeam')
+
+        # 전체 데이터를 시리얼라이즈
+        serializer = ScheduleSerializer(schedules, many=True)
+        # JSON 응답으로 반환
+        return Response({"message": '성공', "data" : serializer.data}, status=status.HTTP_200_OK)
+    
+
     @transaction.atomic
     def post(self, request):
         data = get_soccer_schedule()
