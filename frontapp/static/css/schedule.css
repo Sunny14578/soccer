@@ -1,0 +1,178 @@
+:root{
+    /* Colors */
+    --body--color: #E4E9F7;
+    --sidebar-color: #FFF;
+    --primary-color: #695CFE;
+    --primary-color-light: #F6F5FF;
+    --toggle-color: #DDD;
+    --text-color: #707070;
+
+    /* Transition */
+    --tran-02: all 0.2s ease;
+    --tran-03: all 0.3s ease;
+    --tran-04: all 0.4s ease;
+    --tran-05: all 0.5s ease;
+}
+
+@media screen and (max-width: 1100px) {
+    .main > div{
+        width: 100% !important;
+    }
+}
+
+@media screen and (max-width: 1600px) {
+    .main > div{
+        width: 90%;
+    }
+}
+
+@media screen and (max-width: 2000px) {
+    .main > *{
+        width: 65%;
+    }
+}
+
+img{
+    vertical-align: middle;
+    width: 25px;
+    height: 25px;
+}
+
+.main{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.main > *{
+    margin: 10px 0 10px 0;
+}
+
+.leagues{
+    display: flex;
+    align-items: center;
+    text-align: center; 
+    justify-content: center;
+    height: 60px;
+}
+
+.leagues button{
+    display: inline-block;
+    padding : 5px 20px 5px 20px;
+    border-radius: 15px;
+    border: 1px solid var(--toggle-color);
+    font-size: 17px;
+    margin-right: 15px;
+    background-color: var(--sidebar-color);
+}
+
+.all-btn{
+    background-color: #695CFE !important;
+    color: var(--sidebar-color);
+}
+
+.date{
+    height: 150px;
+    background-color: var(--body--color);
+}
+
+.league{
+    border-radius: 10px;
+    border: 1px solid var(--toggle-color);
+}
+
+.league-header{
+    display: flex;
+    align-items: center;
+    text-align: center; 
+    height: 50px;
+    background-color: var(--body--color);
+    border-bottom: 1px solid var(--toggle-color);
+    /* background-color: var(--primary-color-light); */
+}
+
+.league-header > *{
+    margin-right: 10px;
+}
+
+.league-header > img{
+    width: 20px;
+    height: 25px;
+    margin-left: 20px;
+}
+
+.league-content{
+    width: 100%;
+    height: 60px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.league-content div{
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.content-date{
+    margin-left: 15px;
+    width: 200px;
+}
+
+.content-date span:first-child{
+    font-size: 14px;
+    margin-right: 20px;
+    font-weight: bold;
+}
+
+.content-date span:nth-child(2){
+    font-size: 12px;
+    color: gray;
+}
+
+.team{
+    width: 300px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.team *{
+    margin: 0px 5px 0px 5px;
+}
+
+.home{
+    display: flex;
+    justify-content: flex-end;
+}
+
+.home span:first-child{
+    width: 16px;
+    height: 16px;
+    background-color: darkgray;
+    font-size: 12px;
+    color: var(--sidebar-color);
+}
+
+.status{
+    margin: 0px 30px 0px 30px;
+}
+
+.status .status-span{
+    color: var(--primary-color);
+}
+
+.status span{
+    width: 2.5vw;
+    font-weight: bold;
+}
+
+.score.hidden{
+    display: none;
+}
+
+.content-matchday span{
+    width: 100%;
+    text-align: right;
+    margin-right: 15px;
+}

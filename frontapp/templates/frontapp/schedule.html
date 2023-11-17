@@ -2,13 +2,60 @@
 {% load static %}
 
 {% block content %}
-    <div>
-        <h1>Welcome to My Page!</h1>
-        <p>This is some additional content with unique styling.</p>
-        <div>
-            <img src="{% static 'images/PL.png' %}">
-        </div>
+<link rel="stylesheet" type = "text/css" href="{% static 'css/schedule.css' %}">
+
+<div class="main">
+    <div class="leagues">
+        <button class="all-btn">전체</button>
+        <button>프리미어리그</button>
     </div>
+    <div class="date">
+
+    </div>
+    <div class="premier league">
+        <div class="league-header">
+            <img src="{% static 'images/PL.png' %}">
+            <h4> 프리미어리그 </h4>
+            <span class="matchday"></span>
+        </div>
+        <!-- <div class="league-content">
+            <div class="content-date">
+                <span class="start-date">01:30</span>
+                <span class="stadium">Goodison Park</span>
+            </div>
+            <div class="content-team">
+                <div class="home team">
+                    <span>홈</span>
+                    <span class="home-team-name">에버턴</span>
+                    <img src="{% static 'images/PL.png' %}">
+                </div>
+                <div class="status">
+                    <span class="status-span">예정</span>
+                </div>
+                <div class="away team">
+                    <img src="{% static 'images/PL.png' %}">
+                    <span class="away-team-name">에버턴</span>
+                </div>
+            </div>
+            <div class="content-matchday">
+                <span>13R</span>
+            </div>
+        </div> -->
+    </div>
+    <!-- <div class="bundesliga league">
+        <div class="league-header">
+            <img src="{% static 'images/PL.png' %}">
+            <span> 분데스리가 </span>
+            <span> 1R </span>
+        </div>
+    </div> -->
+    <div>
+        <div 1></div>
+        <div 2></div>
+        <div 3></div>
+    </div>
+</div>
+ 
 
     <script src="{% static 'js/schedule.js' %}"></script>
     <!-- <script src="{% static 'soccer_schedule.json' %}"></script> -->

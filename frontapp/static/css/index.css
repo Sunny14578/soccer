@@ -142,4 +142,6 @@ footer{
     border-top-color: #dee2e6;
     border-top-style: solid;
     border-block-width: 1px;
+    bottom: 0;
+    width: 100%;
 }
