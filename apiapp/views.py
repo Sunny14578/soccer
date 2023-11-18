@@ -36,9 +36,6 @@ def get_secret(KEY, secrets=secrets):
 KEY = get_secret("API_KEY")
 
 class TeamAPIView(APIView):
-    # def get(self, request):
-    #     return render(request, self.template_name)
-
     @transaction.atomic
     def post(self, request):
         data = get_competition_team()

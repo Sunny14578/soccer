@@ -67,6 +67,7 @@ i{
     text-align: center;
     justify-content: center;
     height: 50px;
+    margin-bottom: 15px;
 }
 
 .year-date > *{
@@ -76,6 +77,34 @@ i{
 
 .year-date > span{
     font-weight: bold;
+}
+
+/* Day */
+.day-menu{
+    display: flex;
+    align-items: center;
+    text-align: center; 
+    justify-content: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--toggle-color);
+}
+
+.day-menu i{
+    font-size: 25px;
+    padding: 5px;
+    border-radius: 30px;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1); /* 수평, 수직, 흐림 정도, 색상 */
+}
+
+.day{
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    margin: 0 10px 0 10px;
+}
+
+.day em{
+    margin-bottom: 5px;
 }
 
 .leagues{
