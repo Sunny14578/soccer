@@ -9,6 +9,10 @@ from rest_framework.views import APIView
 from .models import Team, Competition, Schedule
 from django.db import transaction
 from .serializers import *
+from django.db.models import Q
+from datetime import datetime, timezone
+import calendar
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -100,45 +104,87 @@ class ScheduleAPIView(APIView):
 
     @transaction.atomic
     def post(self, request):
-        data = get_soccer_schedule()
-        season = data['filters']['season']
-
-        desired_competition_name = 'Team 1'
-        desired_season = '2023'
-
-        # season과 name을 동시에 고려하여 특정 Team 가져오기
-        datas = []
-
+        start_time, last_time = start_last_date(request.data)
+        
         try:
-            for i in data['matches']:
-                matchday = i['matchday']
-                utcDate = i['utcDate']
-                match_status = i['status']
+            schedules = Schedule.objects.select_related('awayTeam', 'homeTeam').filter(
+                Q(utcDate__gte=start_time) & Q(utcDate__lte=last_time)
+            )
 
-                team = get_foreign_team(season, i['homeTeam']['name'], i['awayTeam']['name'])
-                awayTeam = team[1]
-                homeTeam = team[0]
+            serializer = ScheduleSerializer(schedules, many=True)
 
-                score_home = i['score']['fullTime']['home']
-                score_away = i['score']['fullTime']['away']
-                competition = Competition.objects.get(name=i['competition']['name'])
-
-                datas.append(Schedule(
-                    matchday=matchday,
-                    utcDate=utcDate,
-                    match_status=match_status,
-                    homeTeam=homeTeam,
-                    awayTeam=awayTeam,
-                    score_home=score_home,
-                    score_away=score_away,
-                    competition=competition,
-                ))
-
-            Schedule.objects.bulk_create(datas)
-            return Response({"message": '성공'}, status=status.HTTP_200_OK)
+            return Response({"message": '성공', "data" : serializer.data}, status=status.HTTP_200_OK)
         except Exception as e:
             error_message = str(e)
             return Response({"message": error_message}, status=status.HTTP_400_BAD_REQUEST)
+
+def start_last_date(reqDate):
+
+    """
+    해당 년 월의 첫일과 마지막일의 시간을 구하는 함수
+    """
+    
+    date = reqDate.get('currentDate')
+    year = date['currentYear']
+    month = date['currentMonth']
+
+    currentDate = datetime(year, month, 1)
+    utc_date_start = currentDate.replace(tzinfo=timezone.utc)
+
+    lastDay = last_day_of_month(year, month)
+    currentLastDate = datetime(year, month, lastDay, 23, 59, 59)
+    utc_date_last = currentLastDate.replace(tzinfo=timezone.utc)
+
+    return utc_date_start, utc_date_last
+    
+def last_day_of_month(year, month):
+    """
+    해당 년 월의 마지막 일수를 구하는 함수
+    """
+    _, last_day = calendar.monthrange(year, month)
+    return last_day
+   
+        
+def save_api_data_to_db():
+    data = get_soccer_schedule()
+    season = data['filters']['season']
+
+    desired_competition_name = 'Team 1'
+    desired_season = '2023'
+
+    # season과 name을 동시에 고려하여 특정 Team 가져오기
+    datas = []
+
+    try:
+        for i in data['matches']:
+            matchday = i['matchday']
+            utcDate = i['utcDate']
+            match_status = i['status']
+
+            team = get_foreign_team(season, i['homeTeam']['name'], i['awayTeam']['name'])
+            awayTeam = team[1]
+            homeTeam = team[0]
+
+            score_home = i['score']['fullTime']['home']
+            score_away = i['score']['fullTime']['away']
+            competition = Competition.objects.get(name=i['competition']['name'])
+
+            datas.append(Schedule(
+                matchday=matchday,
+                utcDate=utcDate,
+                match_status=match_status,
+                homeTeam=homeTeam,
+                awayTeam=awayTeam,
+                score_home=score_home,
+                score_away=score_away,
+                competition=competition,
+            ))
+
+        Schedule.objects.bulk_create(datas)
+        return Response({"message": '성공'}, status=status.HTTP_200_OK)
+    except Exception as e:
+        error_message = str(e)
+        return Response({"message": error_message}, status=status.HTTP_400_BAD_REQUEST)
         
 
 def get_soccer_schedule():
