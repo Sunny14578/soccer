@@ -75,12 +75,15 @@ nextArrow.addEventListener("click", nextchangeMonth);
 
 function getScheduleAPI(){
     apiUrl = '../api/schedule/';
+    date = { currentYear : year,
+            currentMonth : month}
 
     fetch(apiUrl, {
-        method: 'GET',
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-        }
+        },
+        body: JSON.stringify({ currentDate : date }),
     })
     .then(response => response.json())
     .then(data => {
@@ -93,8 +96,28 @@ function getScheduleAPI(){
     });   
 }
 
+// function getScheduleAPI(){
+//     apiUrl = '../api/schedule/';
+
+//     fetch(apiUrl, {
+//         method: 'GET',
+//         headers: {
+//             'Content-Type': 'application/json',
+//         }
+//     })
+//     .then(response => response.json())
+//     .then(data => {
+//         if (data.message){
+//             preprocessMatchData(data.data);
+//         }
+//     })
+//     .catch(error => {
+//         console.error('Error loading JSON file:', error);
+//     });   
+// }
+
 function preprocessMatchData(data){
-    console.log(data);
+    let dateDic = []
 
     data.forEach(match => {
         const awayTeam = match.awayTeam
@@ -112,7 +135,8 @@ function preprocessMatchData(data){
         const matchday = match.matchday;
 
         const utcDate = match.utcDate;
-        const time = formatTime(utcDate)
+        const time = formatTimeHour(utcDate)
+        dateDic.push(utcDate);
 
         const preproData = {
             awayTeamName, homeTeamName,
@@ -125,12 +149,22 @@ function preprocessMatchData(data){
 
         createDynamicTags(preproData);
     })
+
+    const dateList = dayAvailableList(dateDic);
+    createDaysTags(dateList);
 }
 
-function formatTime(date){
+function formatTimeHour(date){
     const utcDate = new Date(date);
     const koreaTime = utcDate.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', hour12: false, hour: 'numeric', minute: 'numeric' });
     return koreaTime;
+}
+
+function formatTimeDay(date){
+    const utcDate = new Date(date);
+    const koreaTime = utcDate.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', hour12: false, day: 'numeric'});
+    const preproTime =  koreaTime.slice(0, koreaTime.length-1);
+    return preproTime;
 }
 
 const matchdayTag = document.querySelector('.matchday');
@@ -183,6 +217,61 @@ function createDynamicTags(preproData){
 
     // DocumentFragment을 실제 DOM에 추가
     parentElement.appendChild(fragment);
+}
+
+function createDaysTags(dateList){
+    const fragment = document.createDocumentFragment();
+    const daysTag = document.querySelector('.days');
+
+    const days = new Date(year, month, 0).getDate();
+
+    for(let i=1; i<=days; i++){
+        const boolean = dayAvailable(i, dateList);
+      
+        const date = new Date(year, month, i); // month는 0부터 시작하므로 -1 해줍니다.
+        const week = { weekday: 'short', timeZone: 'Asia/Seoul' };
+        const dayOfWeek = new Intl.DateTimeFormat('ko-KR', week).format(date);
+        
+        const htmlString = 
+            `
+            <div class="day">
+                <em>${dayOfWeek}</em>
+                <span class="${boolean ? "active" : "inactive"}">${i}</span>
+            </div>
+            `
+
+        const tempElement = document.createElement('div');
+        tempElement.innerHTML = htmlString;
+
+        while (tempElement.firstChild) {
+            fragment.appendChild(tempElement.firstChild);
+        }
+    }
+
+    daysTag.appendChild(fragment);
+}
+
+function dayAvailableList(date){
+    const dateList = []
+
+    date.forEach(time => {
+        const day = formatTimeDay(time);
+
+        if (!dateList.includes(day)){
+            dateList.push(day);
+        }
+    })
+
+    return dateList
+}
+
+function dayAvailable(day, dateList) {
+    let boolean = true;
+    
+    if(!dateList.includes(String(day))){
+        boolean = false;
+    }
+    return boolean
 }
 
 function scoreCheck(scoreHome, scoreAway) {
