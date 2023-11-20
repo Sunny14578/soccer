@@ -239,3 +239,20 @@ i{
     text-align: right;
     margin-right: 15px;
 }
+
+/* slide */
+.swiper{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    text-align: center; 
+    justify-content: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--toggle-color);
+}
+
+.swiper-button-prev,
+.swiper-button-next{
+    --swiper-navigation-size:22px;
+    --swiper-theme-color:black;
+}

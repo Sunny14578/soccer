@@ -2,7 +2,10 @@
 {% load static %}
 
 {% block content %}
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <link rel="stylesheet" type = "text/css" href="{% static 'css/schedule.css' %}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+
 
 <div class="main">
     <div class="leagues">
@@ -21,6 +24,20 @@
                 
             </div>
             <i class='bx bx-chevron-right' ></i>
+        </div>
+        <div class="swiper">
+            <!-- Additional required wrapper -->
+            <div class="swiper-wrapper">
+            <!-- Slides -->
+            <div class="swiper-slide">Slide 1</div>
+            <div class="swiper-slide">Slide 2</div>
+            <div class="swiper-slide">Slide 3</div>
+            ...
+            </div>
+            <!-- If we need pagination -->
+            <!-- If we need navigation buttons -->
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-button-next"></div>
         </div>
     </div>
     <div class="premier league">
@@ -60,14 +77,10 @@
             <span> 1R </span>
         </div>
     </div> -->
-    <div>
-        <div 1></div>
-        <div 2></div>
-        <div 3></div>
-    </div>
+ 
 </div>
  
 
-    <script src="{% static 'js/schedule.js' %}"></script>
+<script src="{% static 'js/schedule.js' %}"></script>
     <!-- <script src="{% static 'soccer_schedule.json' %}"></script> -->
 {% endblock %}

@@ -222,6 +222,7 @@ function createDynamicTags(preproData){
 function createDaysTags(dateList){
     const fragment = document.createDocumentFragment();
     const daysTag = document.querySelector('.days');
+    const slideTag = document.querySelector('.swiper-slide');
 
     const days = new Date(year, month, 0).getDate();
 
@@ -284,4 +285,14 @@ function scoreCheck(scoreHome, scoreAway) {
     }
     return scoreCheck
 }
+
+const swiper = new Swiper('.swiper', {
+
+    // Navigation arrows
+    navigation: {
+      nextEl: '.swiper-button-next',
+      prevEl: '.swiper-button-prev',
+    },
+  
+  });
 
