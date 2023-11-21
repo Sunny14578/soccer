@@ -5,6 +5,3 @@ def home(request):
 
 def schedule(request):
     return render(request, 'frontapp/schedule.html')
-
-def slidetest(request):
-    return render(request, 'frontapp/test.html')

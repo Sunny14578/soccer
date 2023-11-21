@@ -88,6 +88,7 @@ function getScheduleAPI(){
     .then(response => response.json())
     .then(data => {
         if (data.message){
+            // localStorage.setItem('schedule', JSON.stringify(data.data));
             preprocessMatchData(data.data);
         }
     })
@@ -96,27 +97,21 @@ function getScheduleAPI(){
     });   
 }
 
-// function getScheduleAPI(){
-//     apiUrl = '../api/schedule/';
-
-//     fetch(apiUrl, {
-//         method: 'GET',
-//         headers: {
-//             'Content-Type': 'application/json',
-//         }
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         if (data.message){
-//             preprocessMatchData(data.data);
-//         }
-//     })
-//     .catch(error => {
-//         console.error('Error loading JSON file:', error);
-//     });   
-// }
+let leagueCheck = false;
 
 function preprocessMatchData(data){
+    
+    const dateArray = nearestDate(data);
+    
+    let dayCheck;
+
+    dateArray.some(d => {
+        if(day <= d){
+            dayCheck = d;
+            return true;
+        }
+    })
+    
     let dateDic = []
 
     data.forEach(match => {
@@ -147,7 +142,12 @@ function preprocessMatchData(data){
             time
         }
 
-        createDynamicTags(preproData);
+        const checkTime = parseInt(formatTimeDay(utcDate), 10)
+        
+        if (checkTime == dayCheck && !leagueCheck){
+            createDynamicTags(preproData);
+        }
+        
     })
 
     const dateList = dayAvailableList(dateDic);
@@ -165,6 +165,12 @@ function formatTimeDay(date){
     const koreaTime = utcDate.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', hour12: false, day: 'numeric'});
     const preproTime =  koreaTime.slice(0, koreaTime.length-1);
     return preproTime;
+}
+
+function nearestDate(date){
+    const utcDates = date.map(match => parseInt(formatTimeDay(match.utcDate), 10));
+
+    return utcDates;
 }
 
 const matchdayTag = document.querySelector('.matchday');
@@ -189,12 +195,12 @@ function createDynamicTags(preproData){
                 <img src="${preproData.homeTeamLogo}">
             </div>
             <div class="status">
-                <span class="home-score score ${preproData.matchStatus == '예정' ? 'hidden' : ''}" 
-                    style="color: ${Check == 2 ? 'lightgray' : ''}">${preproData.scoreHome}
+                <span class="home-score score" 
+                    style="color: ${Check == 2 ? 'lightgray' : ''}">${preproData.matchStatus === '예정' ? '' : preproData.scoreHome}
                 </span>
                 <span class="status-span">${preproData.matchStatus}</span>
-                <span class="away-score score ${preproData.matchStatus == '예정' ? 'hidden' : ''}"
-                    style="color: ${Check == 1 ? 'lightgray' : ''}">${preproData.scoreAway}
+                <span class="away-score score"
+                    style="color: ${Check == 1 ? 'lightgray' : ''}">${preproData.matchStatus === '예정' ? '' : preproData.scoreAway}
                 </span>
             </div>
             <div class="away team">
@@ -219,37 +225,80 @@ function createDynamicTags(preproData){
     parentElement.appendChild(fragment);
 }
 
+function dayDivClick() {
+    // 클릭 이벤트 핸들러 내용
+    console.log('Div가 클릭되었습니다.');
+    // 추가로 원하는 작업 수행 가능
+}
+
+let test;
+
 function createDaysTags(dateList){
-    const fragment = document.createDocumentFragment();
-    const daysTag = document.querySelector('.days');
-    const slideTag = document.querySelector('.swiper-slide');
+    const swiperTag = document.querySelector('.swiper-wrapper');
 
     const days = new Date(year, month, 0).getDate();
+    const currentDay = day;
+    let check = true;
 
-    for(let i=1; i<=days; i++){
-        const boolean = dayAvailable(i, dateList);
-      
-        const date = new Date(year, month, i); // month는 0부터 시작하므로 -1 해줍니다.
-        const week = { weekday: 'short', timeZone: 'Asia/Seoul' };
-        const dayOfWeek = new Intl.DateTimeFormat('ko-KR', week).format(date);
+    let i = 1;
+    let iLength = 14;
+
+    for(let m=0; m<3; m++){
+        const fragment = document.createDocumentFragment();
         
-        const htmlString = 
-            `
-            <div class="day">
-                <em>${dayOfWeek}</em>
-                <span class="${boolean ? "active" : "inactive"}">${i}</span>
-            </div>
-            `
+        for(let day = i; day<iLength; day++){
+            const boolean = dayAvailable(day, dateList);
+      
+            const date = new Date(year, month, day); // month는 0부터 시작하므로 -1 해줍니다.
+            const week = { weekday: 'short', timeZone: 'Asia/Seoul' };
+            const dayOfWeek = new Intl.DateTimeFormat('ko-KR', week).format(date);
 
-        const tempElement = document.createElement('div');
-        tempElement.innerHTML = htmlString;
+            let currentClass = 'day';
+    
+            if (currentDay <= day && boolean && check) {
+                currentClass += ' current';
+                check = false;
+                test = day;
+            }
 
-        while (tempElement.firstChild) {
-            fragment.appendChild(tempElement.firstChild);
+            const htmlString = 
+                `
+                <div class="${currentClass} ${boolean ? "active" : "inactive"}">
+                    <em>${dayOfWeek}</em>
+                    <span>${day}</span>
+                </div>
+                `
+
+            const tempElement = document.createElement('div');
+            tempElement.innerHTML = htmlString;
+        
+            while (tempElement.firstChild) {
+                const className = tempElement.firstChild.classList;
+            
+                if (className) {
+                    if (!className.contains('inactive')){
+                        tempElement.firstChild.addEventListener('click', dayDivClick);
+                    }
+                }
+                
+                fragment.appendChild(tempElement.firstChild);
+            }
         }
-    }
+        var newSlide = document.createElement('div');
+        newSlide.className = 'swiper-slide';
+        newSlide.appendChild(fragment);
 
-    daysTag.appendChild(fragment);
+        if (m==1 && days==30){
+            i = iLength-5;
+            iLength = i+13;
+        }else{
+            i = iLength-4;
+            iLength = i+13;
+        }
+ 
+        
+        swiperTag.appendChild(newSlide);
+    }
 }
 
 function dayAvailableList(date){
@@ -275,6 +324,12 @@ function dayAvailable(day, dateList) {
     return boolean
 }
 
+function dayDivClick() {
+    // 클릭 이벤트 핸들러 내용
+    console.log('Div가 클릭되었습니다.');
+    // 추가로 원하는 작업 수행 가능
+}
+
 function scoreCheck(scoreHome, scoreAway) {
     let scoreCheck = 0
 
@@ -286,13 +341,22 @@ function scoreCheck(scoreHome, scoreAway) {
     return scoreCheck
 }
 
-const swiper = new Swiper('.swiper', {
+let initialPage = 0;
 
-    // Navigation arrows
+if(1 <= day && day <= 11){
+    initialPage = 0;
+}else if(12 <= day && day <= 20){
+    initialPage = 1;
+}else{
+    initialPage = 2;
+}
+
+const swiper = new Swiper('.swiper', {
+    initialSlide : initialPage,
+
     navigation: {
       nextEl: '.swiper-button-next',
       prevEl: '.swiper-button-prev',
     },
-  
-  });
-
+    
+});

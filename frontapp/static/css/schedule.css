@@ -107,14 +107,20 @@ i{
     flex-direction: column;
     width: 90%;
     margin: 0 10px 0 10px;
+    cursor: pointer;
 }
 
 .day em{
     margin-bottom: 5px;
 }
 
-.day span.inactive{
+.inactive{
+    cursor: auto;
     color: var(--toggle-color);
+}
+
+.current{
+    color: #3F76FF;
 }
 
 .leagues{
@@ -247,6 +253,13 @@ i{
     align-items: center;
     text-align: center; 
     justify-content: center;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--toggle-color);
+}
+
+.swiper-slide{
+    display: flex !important;
+    align-items: center;
     padding-bottom: 10px;
     border-bottom: 1px solid var(--toggle-color);
 }

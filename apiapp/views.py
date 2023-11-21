@@ -93,13 +93,23 @@ def get_competition_team():
         return Response({'error': 'Error making the API request'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class ScheduleAPIView(APIView):
-    def get(self, request):
-        schedules = Schedule.objects.all().select_related('awayTeam', 'homeTeam')
+    # def get(self, request):
+    #     schedules = Schedule.objects.all().select_related('awayTeam', 'homeTeam')
 
-        # 전체 데이터를 시리얼라이즈
-        serializer = ScheduleSerializer(schedules, many=True)
-        # JSON 응답으로 반환
-        return Response({"message": '성공', "data" : serializer.data}, status=status.HTTP_200_OK)
+    #     # 전체 데이터를 시리얼라이즈
+    #     serializer = ScheduleSerializer(schedules, many=True)
+    #     # JSON 응답으로 반환
+    #     return Response({"message": '성공', "data" : serializer.data}, status=status.HTTP_200_OK)
+
+    @transaction.atomic
+    def get(self, request, requested_date):
+        try:
+            print(requested_date)
+
+            return Response({"message": '성공'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            error_message = str(e)
+            return Response({"message": error_message}, status=status.HTTP_400_BAD_REQUEST)
     
 
     @transaction.atomic
